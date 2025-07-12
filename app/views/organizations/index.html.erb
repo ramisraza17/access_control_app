@@ -1,0 +1,36 @@
+<div class="max-w-6xl mx-auto">
+  <div class="flex justify-between items-center mb-8">
+    <h1 class="text-3xl font-bold text-gray-800">Organizations</h1>
+  </div>
+  
+  <% if @organizations.any? %>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <% @organizations.each do |org| %>
+        <div class="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
+          <div class="p-6">
+            <h2 class="text-xl font-semibold text-gray-800 mb-2"><%= org.name %></h2>
+            <p class="text-gray-600 mb-4 line-clamp-3"><%= org.description %></p>
+            
+            <div class="flex justify-between items-center">
+              <span class="bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-0.5 rounded">
+                <%= pluralize(org.users.count, 'member') %>
+              </span>
+              
+              <div class="space-x-2">
+                <%= link_to "View", organization_path(org), class: "text-indigo-600 hover:underline" %>
+                <% if current_user.memberships.find_by(organization: org)&.has_permission?(:manage_organization) %>
+                  <%= link_to "Edit", edit_organization_path(org), class: "text-gray-600 hover:underline" %>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="bg-white rounded-lg shadow-md p-8 text-center">
+      <p class="text-gray-600 mb-4">You haven't joined any organizations yet.</p>
+      <%= link_to "Create your first organization", new_organization_path, class: "text-indigo-600 hover:underline" %>
+    </div>
+  <% end %>
+</div>

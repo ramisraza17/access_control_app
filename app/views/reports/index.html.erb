@@ -1,0 +1,56 @@
+<div class="max-w-6xl mx-auto">
+  <div class="flex justify-between items-center mb-8">
+    <h1 class="text-3xl font-bold text-gray-800">Reports for <%= @organization.name %></h1>
+    <% if current_membership&.has_permission?(:view_analytics) %>
+      <%= button_to "Generate Report", generate_organization_reports_path(@organization), 
+          method: :post, 
+          class: "bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded",
+          params: { report_type: 'membership' } %>
+    <% end %>
+  </div>
+  
+  <% if @reports.any? %>
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <% @reports.each do |report| %>
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm font-medium text-gray-900"><%= report.title %></div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-indigo-100 text-indigo-800">
+                  <%= report.report_type.humanize %>
+                </span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <%= report.created_at.strftime("%B %d, %Y") %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <%= link_to "View", organization_report_path(@organization, report), class: "text-indigo-600 hover:text-indigo-900" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="bg-white rounded-lg shadow-md p-8 text-center">
+      <p class="text-gray-600 mb-4">No reports have been generated yet.</p>
+      <% if current_membership&.has_permission?(:view_analytics) %>
+        <%= button_to "Generate Your First Report", generate_organization_reports_path(@organization), 
+            method: :post, 
+            class: "bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded",
+            params: { report_type: 'membership' } %>
+      <% end %>
+    </div>
+  <% end %>
+</div>

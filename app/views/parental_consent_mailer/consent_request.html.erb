@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+</head>
+<body>
+  <div style="max-width: 600px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif; border: 1px solid #e0e0e0;">
+    <div style="background-color: #4f46e5; padding: 20px; text-align: center;">
+      <h1 style="color: white; margin: 0;">Parental Consent Required</h1>
+    </div>
+    
+    <div style="padding: 20px;">
+      <p>Hello,</p>
+      
+      <p>Your child, <strong><%= @user.full_name %></strong> (age <%= @user.age %>), has requested access to features on our platform that require parental consent.</p>
+      
+      <p>To grant permission for your child to access age-appropriate content, please click the button below:</p>
+      
+      <div style="text-align: center; margin: 30px 0;">
+        <%= link_to "Grant Consent", parental_consent_url(token: @user.consent_token), 
+            style: "display: inline-block; background-color: #4f46e5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold;" %>
+      </div>
+      
+      <p>This consent will allow your child to participate in age-restricted spaces and activities on our platform.</p>
+      
+      <p>If you did not request this or believe it's in error, you can safely ignore this email.</p>
+      
+      <p>Thank you,<br>
+      The Access Control Team</p>
+    </div>
+    
+    <div style="background-color: #f3f4f6; padding: 15px; text-align: center; font-size: 12px; color: #6b7280;">
+      <p>© <%= Time.current.year %> Access Control System. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+</html>

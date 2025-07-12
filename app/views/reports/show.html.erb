@@ -1,0 +1,56 @@
+<div class="max-w-6xl mx-auto">
+  <div class="flex justify-between items-start mb-8">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-800"><%= @report.title %></h1>
+      <p class="text-gray-600 mt-2">
+        Organization: <%= @organization.name %> | 
+        Type: <%= @report.report_type.humanize %> | 
+        Generated: <%= @report.created_at.strftime("%B %d, %Y") %>
+      </p>
+    </div>
+    
+    <%= link_to "Back to Reports", organization_reports_path(@organization), class: "text-indigo-600 hover:underline" %>
+  </div>
+  
+  <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+    <h2 class="text-xl font-semibold text-gray-800 mb-4">Report Data</h2>
+    
+    <% report_data = JSON.parse(@report.content) %>
+    <% case @report.report_type %>
+    <% when 'membership' %>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div class="bg-indigo-50 p-4 rounded-lg">
+          <p class="text-lg font-medium text-indigo-800"><%= report_data['total_members'] %></p>
+          <p class="text-gray-600">Total Members</p>
+        </div>
+        <div class="bg-indigo-50 p-4 rounded-lg">
+          <p class="text-lg font-medium text-indigo-800"><%= report_data['new_members'] %></p>
+          <p class="text-gray-600">New Members (30 days)</p>
+        </div>
+        <div class="bg-indigo-50 p-4 rounded-lg">
+          <p class="text-lg font-medium text-indigo-800"><%= (report_data['new_members'].to_f / report_data['total_members'].to_f * 100).round(1) %>%</p>
+          <p class="text-gray-600">Growth Rate</p>
+        </div>
+      </div>
+      
+      <h3 class="text-lg font-medium text-gray-800 mb-4">Role Distribution</h3>
+      <div class="bg-white border border-gray-200 rounded-lg p-4">
+        <% report_data['roles_distribution'].each do |role, count| %>
+          <div class="mb-3">
+            <div class="flex justify-between mb-1">
+              <span class="text-sm font-medium text-gray-700"><%= role.humanize %></span>
+              <span class="text-sm font-medium text-gray-700"><%= count %> (<%= (count.to_f / report_data['total_members'] * 100).round(1) %>%)</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2">
+              <div class="bg-indigo-600 h-2 rounded-full" style="width: <%= (count.to_f / report_data['total_members'] * 100).round(1) %>%"></div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+      
+    <% when 'engagement' %>
+    <% else %>
+      <pre><%= JSON.pretty_generate(report_data) %></pre>
+    <% end %>
+  </div>
+</div>

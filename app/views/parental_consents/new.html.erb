@@ -1,0 +1,37 @@
+<div class="max-w-md mx-auto bg-white p-8 rounded-lg shadow-md">
+  <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Parental Consent Request</h2>
+  
+  <% if @user %>
+    <div class="mb-6 p-4 bg-blue-50 rounded-lg">
+      <p class="text-blue-800">
+        You're providing consent for <strong><%= @user.full_name %></strong> 
+        (age <%= @user.age %>) to access age-restricted content.
+      </p>
+    </div>
+    
+    <div class="mb-6">
+      <h3 class="text-lg font-medium text-gray-800 mb-2">Terms of Consent</h3>
+      <ul class="list-disc pl-5 text-gray-600 space-y-2">
+        <li>I am the parent or legal guardian of <%= @user.full_name %></li>
+        <li>I understand my child will have access to age-appropriate content</li>
+        <li>I consent to the collection of necessary personal information</li>
+        <li>I agree to the platform's terms of service and privacy policy</li>
+      </ul>
+    </div>
+    
+    <%= form_with url: parental_consent_path(@user.consent_token), method: :post, class: "space-y-4" do |form| %>
+      <div class="flex items-center">
+        <%= form.check_box :agree, required: true, class: "h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded" %>
+        <%= form.label :agree, "I agree to the terms above", class: "ml-2 block text-sm text-gray-700" %>
+      </div>
+      
+      <div>
+        <%= form.submit "Grant Consent", class: "w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 cursor-pointer" %>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="bg-red-50 p-4 rounded-lg">
+      <p class="text-red-800">Invalid consent token. Please check the URL or request a new consent email.</p>
+    </div>
+  <% end %>
+</div>

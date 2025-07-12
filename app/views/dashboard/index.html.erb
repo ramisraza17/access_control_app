@@ -1,0 +1,74 @@
+<div class="max-w-6xl mx-auto">
+  <h1 class="text-3xl font-bold text-gray-800 mb-6">Dashboard</h1>
+  
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <h2 class="text-xl font-semibold text-gray-800 mb-4">Your Organizations</h2>
+      <% if @organizations.any? %>
+        <ul class="space-y-3">
+          <% @organizations.each do |org| %>
+            <li class="flex justify-between items-center border-b pb-2">
+              <%= link_to org.name, organization_path(org), class: "text-indigo-600 hover:underline" %>
+              <span class="bg-indigo-100 text-indigo-800 text-xs px-2.5 py-0.5 rounded">
+                <%= current_user.memberships.find_by(organization: org).role.capitalize %>
+              </span>
+            </li>
+          <% end %>
+        </ul>
+        <%= link_to "View All Organizations", organizations_path, class: "mt-4 inline-block text-indigo-600 hover:underline" %>
+      <% else %>
+        <p class="text-gray-600 mb-4">You haven't joined any organizations yet.</p>
+        <%= link_to "Explore Organizations", organizations_path, class: "text-indigo-600 hover:underline" %>
+      <% end %>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <h2 class="text-xl font-semibold text-gray-800 mb-4">Age Information</h2>
+      <p class="mb-2"><span class="font-medium">Date of Birth:</span> <%= current_user.date_of_birth.strftime("%B %d, %Y") %></p>
+      <p class="mb-2"><span class="font-medium">Age:</span> <%= current_user.age %> years</p>
+      <p class="mb-2"><span class="font-medium">Age Group:</span> <%= current_user.age_group.to_s.capitalize %></p>
+      
+      <% if current_user.minor? %>
+        <div class="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+          <h3 class="font-medium text-yellow-800 mb-2">Parental Consent</h3>
+          <% if current_user.parental_consent? %>
+            <p class="text-green-600">✓ Consent granted</p>
+          <% else %>
+            <p class="text-yellow-600">Pending consent</p>
+            <p class="text-sm mt-2">We've sent a consent request to your parent/guardian.</p>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <h2 class="text-xl font-semibold text-gray-800 mb-4">Recent Activity</h2>
+      <p class="text-gray-600">No recent activity</p>
+    </div>
+  </div>
+  
+  <div class="bg-white rounded-lg shadow-md p-6">
+    <h2 class="text-xl font-semibold text-gray-800 mb-4">Available Spaces</h2>
+    <% if @spaces.any? %>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <% @spaces.each do |space| %>
+          <div class="border border-gray-200 rounded-lg p-4">
+            <h3 class="font-medium text-gray-800 mb-2"><%= space.name %></h3>
+            <p class="text-sm text-gray-600 mb-2"><%= space.organization.name %></p>
+            <p class="text-sm mb-3">Ages: <%= space.min_age %> - <%= space.max_age %></p>
+            
+            <% if space.age_appropriate?(current_user) %>
+              <%= button_to "Join Space", join_organization_space_path(space.organization, space), 
+                  class: "w-full bg-indigo-600 hover:bg-indigo-700 text-white py-1 px-3 rounded text-sm" %>
+            <% else %>
+              <p class="text-red-500 text-sm">Not available for your age group</p>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+      <%= link_to "View All Spaces", "#", class: "mt-4 inline-block text-indigo-600 hover:underline" %>
+    <% else %>
+      <p class="text-gray-600">No spaces available at this time.</p>
+    <% end %>
+  </div>
+</div>
